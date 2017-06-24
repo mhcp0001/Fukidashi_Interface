@@ -31,8 +31,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.836"
-        app:layout_constraintVertical_bias="0.747" />
+        app:layout_constraintVertical_bias="0.897"
+        app:layout_constraintHorizontal_bias="0.591" />
 
     <TextView
         android:id="@+id/text_three"
@@ -46,8 +46,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.156"
-        app:layout_constraintVertical_bias="0.31" />
+        app:layout_constraintHorizontal_bias="0.202"
+        app:layout_constraintVertical_bias="0.415" />
 
     <TextView
         android:id="@+id/text_four"
@@ -61,23 +61,8 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.729"
-        app:layout_constraintVertical_bias="0.189" />
-
-    <TextView
-        android:id="@+id/text_five"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="5"
-        android:textSize="50sp"
-        android:clickable="true"
-        android:onClick="onClick"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.293"
-        app:layout_constraintVertical_bias="0.79" />
+        app:layout_constraintHorizontal_bias="0.826"
+        app:layout_constraintVertical_bias="0.184" />
 
     <TextView
         android:id="@+id/count"

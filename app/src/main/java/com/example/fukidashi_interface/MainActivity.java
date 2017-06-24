@@ -1,7 +1,6 @@
 package com.example.fukidashi_interface;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
@@ -9,27 +8,26 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    public static final int NUM_LANG = 5;  /*言語数*/
-    public static final int EN = 0;  /*言語数*/
-    public static final int JP = 1;  /*言語数*/
-    public static final int DE = 2;  /*言語数*/
-    public static final int FR = 3;  /*言語数*/
-    public static final int CN = 4;  /*言語数*/
+    public static final int NUM_LANG = 4;  /*言語数*/
+    public static final int EN = 0;  /*英語*/
+    public static final int JP = 1;  /*日本語*/
+    public static final int KR = 2;  /*韓国語*/
+    public static final int CN = 3;  /*中国語*/
 
     public static int lang = 99;
 
     TextView[] tv = new TextView[NUM_LANG];
     //String str[] = new String[NUM_LANG];
-    String str[] = new String[]{"Hello","こんにちは","Guten Tag","Bonjour","你好"};
-
-    /** スレッドUI操作用ハンドラ */
-    private Handler mHandler = new Handler();
-    /** テキストオブジェクト */
-    private Runnable updateText;
+    String str[] = new String[]{"Hello","こんにちは","アンニョンハセヨ","你好"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setScreenMain();
+    }
+
+    private void setScreenMain(){
         setContentView(R.layout.activity_main);
 
         View decor = this.getWindow().getDecorView();
@@ -45,21 +43,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.text_two).setOnClickListener(this);
         findViewById(R.id.text_three).setOnClickListener(this);
         findViewById(R.id.text_four).setOnClickListener(this);
-        findViewById(R.id.text_five).setOnClickListener(this);
 
         inputTv(str);
 
-        updateText = new Runnable() {
-            public void run() {
-                TextView text = (TextView) findViewById(R.id.count);
-                Integer count = Integer.valueOf(text.getText().toString());
-                count += 1;
-                text.setText(count.toString());
-                mHandler.removeCallbacks(updateText);
-                mHandler.postDelayed(updateText, 1000);
-            }
-        };
-        mHandler.postDelayed(updateText, 1000);
+    }
+
+    private void setScreenSub(){
+        setContentView(R.layout.activity_sub);
+
+        View decor = this.getWindow().getDecorView();
+        decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN | View. SYSTEM_UI_FLAG_IMMERSIVE);
+
+        TextView tv1 = (TextView)findViewById(R.id.text);
+
+        while(true){
+
+            // TODO:音声認識の待ち受けはこっちでやるべきかどうか確認
+            // String spr = SpeechRecognition();
+
+
+            // String trans = transrator(spr);
+            String trans = "translated";
+            tv1.setText(trans);
+        }
 
     }
 
@@ -84,19 +91,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 case R.id.text_three:
                     // クリック処理
-                    Toast.makeText(getApplicationContext(), "Set Language Deutsch (" +
-                            Integer.toString(DE) + ")", Toast.LENGTH_SHORT).show();
-                    lang = DE;
+                    Toast.makeText(getApplicationContext(), "Set Language Korean (" +
+                            Integer.toString(KR) + ")", Toast.LENGTH_SHORT).show();
+                    lang = KR;
                     break;
 
                 case R.id.text_four:
-                    // クリック処理
-                    Toast.makeText(getApplicationContext(), "Set Language French (" +
-                            Integer.toString(FR) + ")", Toast.LENGTH_SHORT).show();
-                    lang = FR;
-                    break;
-
-                case R.id.text_five:
                     // クリック処理
                     Toast.makeText(getApplicationContext(), "Set Language Chinese (" +
                             Integer.toString(CN) + ")", Toast.LENGTH_SHORT).show();
@@ -104,9 +104,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
 
                 default:
-                    break;
             }
             inputTv(lang);
+
+            /*transrate(lang);  //翻訳機に言語の番号を送信して翻訳言語確定*/
+
+            setScreenSub();
         }
     }
 
@@ -119,8 +122,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tv[2].setText("");
         tv[3] = (TextView)findViewById(R.id.text_four);
         tv[3].setText("");
-        tv[4] = (TextView)findViewById(R.id.text_five);
-        tv[4].setText("");
     }
 
     public void inputTv(String str[]){
