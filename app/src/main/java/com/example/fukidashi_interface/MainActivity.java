@@ -1,10 +1,14 @@
 package com.example.fukidashi_interface;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, SpeechRecognitionListenerInterface {
 
@@ -16,12 +20,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public static int lang = 99;
 
+    /*mainRoutine使用インスタンス*/
     private SpeechRecognitionNotify sn = null;
+    Handler mHandler = new Handler();   //UI Threadへのpost用ハンドラ
 
     TextView[] tv = new TextView[NUM_LANG];
     //String str[] = new String[NUM_LANG];
     String str[] = new String[]{"Hello","こんにちは","アンニョンハセヨ","你好"};
     String s = new String();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setScreenMain();
     }
 
-    private void setScreenMain(){
+    public void setScreenMain(){
         setContentView(R.layout.activity_main);
 
         View decor = this.getWindow().getDecorView();
@@ -53,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void setScreenSub(){
+    public void setScreenSub(){
         setContentView(R.layout.activity_sub);
 
         View decor = this.getWindow().getDecorView();
@@ -64,12 +71,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         while(true){
 
+            //タイマーの初期化処理
+            Timer mTimer = new Timer(true);
+            mTimer.schedule( new TimerTask(){
+                @Override
+                public void run() {
+                    // mHandlerを通じてUI Threadへ処理をキューイング
+                    mHandler.post( new Runnable() {
+                        public void run() {
+
+                        }
+                    });
+                }
+            }, 100);
+
             // TODO:音声認識の待ち受けはこっちでやるべきかどうか確認
             // String spr = SpeechRecognition();
             // String trans = transrator(spr);
             String trans = "translated";
             tv1.setText(trans);
+
+            break;
         }
+
+        setScreenMain();
 
     }
 
@@ -153,4 +178,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void SpeechRecognition(){ //音声認識がされた時
 
     }
+
 }
