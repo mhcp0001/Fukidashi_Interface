@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, SpeechRecognitionListenerInterface {
 
     public static final int NUM_LANG = 4;  /*言語数*/
     public static final int EN = 0;  /*英語*/
@@ -16,14 +16,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public static int lang = 99;
 
+    private SpeechRecognitionNotify sn = null;
+
     TextView[] tv = new TextView[NUM_LANG];
     //String str[] = new String[NUM_LANG];
     String str[] = new String[]{"Hello","こんにちは","アンニョンハセヨ","你好"};
-
+    String s = new String();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        // 通知用クラスのインスタンス化
+        sn = new SpeechRecognitionNotify();
+        // 通知用クラスに通知先のインスタンスを付加
+        sn.setListener(this);
         setScreenMain();
     }
 
@@ -61,8 +66,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             // TODO:音声認識の待ち受けはこっちでやるべきかどうか確認
             // String spr = SpeechRecognition();
-
-
             // String trans = transrator(spr);
             String trans = "translated";
             tv1.setText(trans);
@@ -139,6 +142,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             tv[i].setText("");
         }
+
+    }
+
+    @Override
+    public void noSpeechRecognition(){ /*音声認識されていないとき*/
+    }
+
+    @Override
+    public void SpeechRecognition(){ //音声認識がされた時
 
     }
 }
