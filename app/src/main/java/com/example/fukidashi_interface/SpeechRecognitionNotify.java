@@ -15,7 +15,7 @@ public class SpeechRecognitionNotify {
     /**
      * etに文字が入力されているかどうかを判定する
      */
-    public void checkText(){
+    public void checkString(){
         if(this.listener != null){
             if(this.et.equals("")){
                 // 文字が入力されていない場合の通知を行う

@@ -23,6 +23,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     /*mainRoutine使用インスタンス*/
     private SpeechRecognitionNotify sn = null;
     Handler mHandler = new Handler();   //UI Threadへのpost用ハンドラ
+    Timer mTimer = null;
+    boolean timerFlag = false;
 
     TextView[] tv = new TextView[NUM_LANG];
     //String str[] = new String[NUM_LANG];
@@ -32,8 +34,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         // 通知用クラスのインスタンス化
         sn = new SpeechRecognitionNotify();
+        sn.SpeechRecognitionNot(s);
         // 通知用クラスに通知先のインスタンスを付加
         sn.setListener(this);
         setScreenMain();
@@ -61,13 +65,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void setScreenSub(){
-        setContentView(R.layout.activity_sub);
 
+        setContentView(R.layout.activity_sub);
         View decor = this.getWindow().getDecorView();
         decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_FULLSCREEN | View. SYSTEM_UI_FLAG_IMMERSIVE);
+                | View.SYSTEM_UI_FLAG_FULLSCREEN | View. SYSTEM_UI_FLAG_IMMERSIVE);//FullScreen
 
-        TextView tv1 = (TextView)findViewById(R.id.text);
+        TextView tv1 = (TextView)findViewById(R.id.text); //activity_subのTextView
 
         while(true){
 
@@ -78,20 +82,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 public void run() {
                     // mHandlerを通じてUI Threadへ処理をキューイング
                     mHandler.post( new Runnable() {
-                        public void run() {
-
+                        public void run() {  /*10秒間音声認識や文字列受信がなければフラグを立ててwhileループを抜ける*/
+                        /*TODO:タイマーの秒数カウントを出せるようにした方がいいかもしれない…() */
+                        timerFlag = true;
                         }
                     });
                 }
-            }, 100);
+            }, 10000);
 
-            // TODO:音声認識の待ち受けはこっちでやるべきかどうか確認
-            // String spr = SpeechRecognition();
+            /* 音声認識か、通信によってsに文字列が入っているかを確認する*/
+            sn.checkString();
+
             // String trans = transrator(spr);
             String trans = "translated";
             tv1.setText(trans);
 
-            break;
+            if(timerFlag) {
+                break;
+            }
         }
 
         setScreenMain();
@@ -171,12 +179,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void noSpeechRecognition(){ /*音声認識されていないとき*/
+    public void noSpeechRecognition(){ /*音声認識されていないときは特に何もしない*/
+
     }
 
     @Override
-    public void SpeechRecognition(){ //音声認識がされた時
-
+    public void SpeechRecognition(){ //音声認識がされた時、もしくは通信クラスから文字列を受けとったときにタイマーを消す
+        mTimer.cancel();
+        mTimer = null;
     }
 
 }
