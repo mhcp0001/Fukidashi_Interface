@@ -12,7 +12,7 @@ import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, SpeechRecognitionListenerInterface {
 
-    public static final int NUM_LANG = 4;  /*言語数*/
+    public static final int NUM_LANG = 5;  /*言語数*/
     public static final int EN = 0;  /*英語*/
     public static final int JP = 1;  /*日本語*/
     public static final int KR = 2;  /*韓国語*/
@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void inputTv(String str[]){
-        for(int i=0; i < NUM_LANG; i++){
+        for(int i=1; i < NUM_LANG-1; i++){
             tv[i].setText(str[i]);
         }
     }
