@@ -19,6 +19,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final int CN = 3;  /*中国語*/
 
     public static int lang = 99;
+    public static int mode_me = lang;
+    public static int mode_you = lang;
 
     /*mainRoutine使用インスタンス*/
     private SpeechRecognitionNotify sn = null;
@@ -28,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     TextView[] tv = new TextView[NUM_LANG];
     //String str[] = new String[NUM_LANG];
-    String str[] = new String[]{"Hello","こんにちは","アンニョンハセヨ","你好"};
+    String str[] = new String[]{"Hello","こんにちは","안녕하세요","你好"};
     String s = new String();
 
     @Override
@@ -50,17 +52,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_FULLSCREEN | View. SYSTEM_UI_FLAG_IMMERSIVE);
 
-        tvClear(tv);
+
+        //テキストエリア１（真ん中）をタッチ可能に設定&wait表示
+        //タッチが検出された側
+        findViewById(R.id.text_one).setOnClickListener(this);
+        readyfor(tv);
+
+        //～認識待ち～
 
         /*翻訳側からいい感じにテキスト投げられてくる予定*/
         //str = honyaku();
+        //認識した言語(s_lang)およびその翻訳結果(String[])が投げられてくる？
+        //mode_me = s_lang;//認識した言語
+        //langとstrを相方に投げる
+        //テキストエリア１にs_lang表示
+        //set_me(s_lang);
 
-        findViewById(R.id.text_one).setOnClickListener(this);
+        //ラスト、相手の言語(t_lang)が返ってくるので
+        //mode_you = t_lang;
+
+
+
+        //タッチが検出されない側、つまりシグナルを受け取る側
+        tvClear2(tv);
+
+        //～待ち時間～
+        //langとstrを受け取る
+        mode_you=lang;
+
+        //strを領域2～5に表示
         findViewById(R.id.text_two).setOnClickListener(this);
         findViewById(R.id.text_three).setOnClickListener(this);
         findViewById(R.id.text_four).setOnClickListener(this);
+        findViewById(R.id.text_five).setOnClickListener(this);
 
         inputTv(str);
+
 
     }
 
@@ -85,7 +112,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     // mHandlerを通じてUI Threadへ処理をキューイング
                     mHandler.post( new Runnable() {
                         public void run() {  /*10秒間音声認識や文字列受信がなければフラグを立ててwhileループを抜ける*/
-                        /*TODO:タイマーの秒数カウントを出せるようにした方がいいかもしれない…() */
                         timerFlag = true;
                         }
                     });
@@ -117,31 +143,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (v != null && lang == 99) {
             switch (v.getId()) {
                 case R.id.text_one:
-                    // クリック処理
-                    Toast.makeText(getApplicationContext(), "Set Language English (" +
-                            Integer.toString(EN) + ")", Toast.LENGTH_SHORT).show();
-                    lang = EN;
+
+                    findViewById(R.id.text_one).setEnabled(false);
+                    tvClear1(tv);
+                    //ここで相方へシグナルを送信する必要がある。
                     break;
 
                 case R.id.text_two:
                     // クリック処理
-                    Toast.makeText(getApplicationContext(), "Set Language Japanese (" +
-                            Integer.toString(JP) + ")", Toast.LENGTH_SHORT).show();
-                    lang = JP;
+                    Toast.makeText(getApplicationContext(), "Set Language English (" +
+                            Integer.toString(EN) + ")", Toast.LENGTH_SHORT).show();
+                    lang = EN;
+                    mode_me = EN;
                     break;
 
                 case R.id.text_three:
                     // クリック処理
-                    Toast.makeText(getApplicationContext(), "Set Language Korean (" +
-                            Integer.toString(KR) + ")", Toast.LENGTH_SHORT).show();
-                    lang = KR;
+                    Toast.makeText(getApplicationContext(), "Set Language Japanese (" +
+                            Integer.toString(JP) + ")", Toast.LENGTH_SHORT).show();
+                    lang = JP;
+                    mode_me = JP;
                     break;
 
                 case R.id.text_four:
                     // クリック処理
-                    Toast.makeText(getApplicationContext(), "Set Language Chinese (" +
+                    Toast.makeText(getApplicationContext(), "Set Language Deutsch (" +
                             Integer.toString(CN) + ")", Toast.LENGTH_SHORT).show();
                     lang = CN;
+                    mode_me = CN;
+                    break;
+
+                case R.id.text_five:
+                    // クリック処理
+                    Toast.makeText(getApplicationContext(), "Set Language French (" +
+                            Integer.toString(KR) + ")", Toast.LENGTH_SHORT).show();
+                    lang = KR;
+                    mode_me = KR;
                     break;
 
                 default:
@@ -154,15 +191,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void tvClear(TextView[] tv){
+    public void readyfor(TextView[] tv){
         tv[0] = (TextView)findViewById(R.id.text_one);
-        tv[0].setText("......");
+        tv[0].setText("wait touching");
+
+    }
+
+    public void tvClear1(TextView[] tv){//音声認識待ちするところ
+        tv[0] = (TextView)findViewById(R.id.text_one);
+        tv[0].setText("・・・");
         tv[1] = (TextView)findViewById(R.id.text_two);
         tv[1].setText("");
         tv[2] = (TextView)findViewById(R.id.text_three);
         tv[2].setText("");
         tv[3] = (TextView)findViewById(R.id.text_four);
         tv[3].setText("");
+        tv[4] = (TextView)findViewById(R.id.text_five);
+        tv[4].setText("");
+    }
+
+    public void tvClear2(TextView[] tv){//相手からのシグナル待ち
+        tv[0] = (TextView)findViewById(R.id.text_one);
+        tv[0].setText("wait");
+        tv[1] = (TextView)findViewById(R.id.text_two);
+        tv[1].setText("");
+        tv[2] = (TextView)findViewById(R.id.text_three);
+        tv[2].setText("");
+        tv[3] = (TextView)findViewById(R.id.text_four);
+        tv[3].setText("");
+        tv[4] = (TextView)findViewById(R.id.text_five);
+        tv[4].setText("");
+    }
+
+    public void set_me(TextView[] tv){
+        tv[0] = (TextView)findViewById(R.id.text_one);
+        tv[0].setText(' '/*翻訳される前の言語*/);
+
     }
 
     public void inputTv(String str[]){
