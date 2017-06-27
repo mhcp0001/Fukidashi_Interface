@@ -74,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         TextView tv1 = (TextView)findViewById(R.id.text); //activity_subのTextView
 
         while(true){
+            //TextViewの初期化
+            tv1.setText("");
 
             //タイマーの初期化処理
             Timer mTimer = new Timer(true);
@@ -90,12 +92,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }, 10000);
 
+            //タイマー動かしてる間ってこの下のプログラム走るよな…？
+
             /* 音声認識か、通信によってsに文字列が入っているかを確認する*/
             sn.checkString();
 
-            // String trans = transrator(spr);
-            String trans = "translated";
-            tv1.setText(trans);
+            //viewは表示するためのString型変数。翻訳クラスや通信クラスはこれに表示したい文字列を放り込んでください。
+            // String view = transrator();
+            String view = s;
+            tv1.setText(view);
 
             if(timerFlag) {
                 break;
