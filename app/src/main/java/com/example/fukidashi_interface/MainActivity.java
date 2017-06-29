@@ -1,16 +1,15 @@
 package com.example.fukidashi_interface;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Timer;
-import java.util.TimerTask;
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, SpeechRecognitionListenerInterface {
+    public static final String TAG = "Test02_01";
 
     public static final int NUM_LANG = 5;  /*言語数*/
     public static final int EN = 0;  /*英語*/
@@ -22,10 +21,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static int mode_me = lang;
     public static int mode_you = lang;
 
-    /*mainRoutine使用インスタンス*/
-    private SpeechRecognitionNotify sn = null;
-    Handler mHandler = new Handler();   //UI Threadへのpost用ハンドラ
-    Timer mTimer = null;
     boolean timerFlag = false;
 
     TextView[] tv = new TextView[NUM_LANG];
@@ -37,12 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // 通知用クラスのインスタンス化
-        sn = new SpeechRecognitionNotify();
-        sn.SpeechRecognitionNot(s);
-        // 通知用クラスに通知先のインスタンスを付加
-        sn.setListener(this);
-        setScreenMain();
+        setScreenSub();
     }
 
     public void setScreenMain(){
@@ -93,47 +83,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void setScreenSub(){
 
+        Log.d(TAG,"into setScreenSub");
+
         setContentView(R.layout.activity_sub);
         View decor = this.getWindow().getDecorView();
         decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_FULLSCREEN | View. SYSTEM_UI_FLAG_IMMERSIVE);//FullScreen
 
         TextView tv1 = (TextView)findViewById(R.id.text); //activity_subのTextView
+        int i = 0;
+        Log.d(TAG,"setScreenSub");
 
-        while(true){
-            //TextViewの初期化
-            tv1.setText("");
+        //音声認識か、通信によってsに文字列が入っているかを確認する
 
-            //タイマーの初期化処理
-            Timer mTimer = new Timer(true);
-            mTimer.schedule( new TimerTask(){
-                @Override
-                public void run() {
-                    // mHandlerを通じてUI Threadへ処理をキューイング
-                    mHandler.post( new Runnable() {
-                        public void run() {  /*10秒間音声認識や文字列受信がなければフラグを立ててwhileループを抜ける*/
-                        timerFlag = true;
-                        }
-                    });
-                }
-            }, 10000);
+        //viewは表示するためのString型変数。翻訳クラスや通信クラスはこれに表示したい文字列を放り込む。
+        // String view = transrator();
+        String view = "I have a pen";
 
-            //タイマー動かしてる間ってこの下のプログラム走るよな…？
+        tv1.setText(view);
 
-            /* 音声認識か、通信によってsに文字列が入っているかを確認する*/
-            sn.checkString();
 
-            //viewは表示するためのString型変数。翻訳クラスや通信クラスはこれに表示したい文字列を放り込んでください。
-            // String view = transrator();
-            String view = s;
-            tv1.setText(view);
-
-            if(timerFlag) {
-                break;
-            }
+        if(timerFlag) {  //一定時間が経過したらtimerFlagをTrueにする。これで初期画面に遷移できる
+            Log.d(TAG, "loop break");
+            setScreenMain();
         }
-
-        setScreenMain();
 
     }
 
@@ -245,17 +218,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             tv[i].setText("");
         }
 
-    }
-
-    @Override
-    public void noSpeechRecognition(){ /*音声認識されていないときは特に何もしない*/
-
-    }
-
-    @Override
-    public void SpeechRecognition(){ //音声認識がされた時、もしくは通信クラスから文字列を受けとったときにタイマーを消す
-        mTimer.cancel();
-        mTimer = null;
     }
 
 }
