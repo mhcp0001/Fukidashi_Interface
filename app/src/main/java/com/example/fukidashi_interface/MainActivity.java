@@ -244,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         inputCenterTv(mode_me);
     }
 
-    // SubActivity からの返しの結果を受け取る
+    // SubActivity からの返ってきた時にModeを初期化、初期画面に戻る
     protected void onActivityResult( int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
 

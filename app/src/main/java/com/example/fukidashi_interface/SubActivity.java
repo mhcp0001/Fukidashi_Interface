@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 public class SubActivity extends MainActivity {
 
-    private boolean timerFlag = false;
+    private boolean timerFlag = true;
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -43,7 +43,6 @@ public class SubActivity extends MainActivity {
             timerFlag = false;
 
             Intent intent = new Intent();
-            // keyword "RESULT" でデータの可算結果 value を返す
             intent.putExtra("mode_you", 99);
             intent.putExtra("mode_me", 99);
             setResult(RESULT_OK, intent);
