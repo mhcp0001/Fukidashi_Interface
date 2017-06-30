@@ -1,11 +1,14 @@
 package com.example.fukidashi_interface;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -17,162 +20,140 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final int KR = 2;  /*韓国語*/
     public static final int CN = 3;  /*中国語*/
 
-    public static int lang = 99;
-    public static int mode_me = lang;
-    public static int mode_you = lang;
+    static final int RESULT_SUBACTIVITY = 1000;
 
-    boolean timerFlag = false;
+    public static int mode_me = 99;
+    public static int mode_you = 99;
 
     TextView[] tv = new TextView[NUM_LANG];
     //String str[] = new String[NUM_LANG];
     String str[] = new String[]{"Hello","こんにちは","안녕하세요","你好"};
-    String s = new String();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        setScreenSub();
+        waitTouch();
     }
 
-    public void setScreenMain(){
-        setContentView(R.layout.activity_main);
-
+    public void waitTouch(){
+        setContentView(R.layout.activity_initial);
         View decor = this.getWindow().getDecorView();
         decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_FULLSCREEN | View. SYSTEM_UI_FLAG_IMMERSIVE);
 
+        ImageView imageView = (ImageView) findViewById(R.id.gifView);
+        GlideDrawableImageViewTarget target = new GlideDrawableImageViewTarget(imageView);
+
+        boolean sig = false; //通信相手からシグナルを受け取ったらTrueになる、という想定。
+
+        //gifアニメーション表示関数(妙に重いのとサイズがあっていないためコメントアウト)
+        //Glide.with(this).load(R.raw.waterdrop).into(target);
 
         //テキストエリア１（真ん中）をタッチ可能に設定&wait表示
-        //タッチが検出された側
-        findViewById(R.id.text_one).setOnClickListener(this);
         readyfor(tv);
 
-        //～認識待ち～
-
-        /*翻訳側からいい感じにテキスト投げられてくる予定*/
-        //str = honyaku();
-        //認識した言語(s_lang)およびその翻訳結果(String[])が投げられてくる？
-        //mode_me = s_lang;//認識した言語
-        //langとstrを相方に投げる
-        //テキストエリア１にs_lang表示
-        //set_me(s_lang);
-
-        //ラスト、相手の言語(t_lang)が返ってくるので
-        //mode_you = t_lang;
+        //タッチが検出されるまで待つ
+        findViewById(R.id.text_one).setOnClickListener(this);
 
 
+        if(sig){//タッチが検出されない側、つまりシグナルを受け取った側
+            findViewById(R.id.text_one).setEnabled(false); //touchWaitを無効化
+            tvClear2(tv);
+            //～待ち時間～
 
-        //タッチが検出されない側、つまりシグナルを受け取る側
-        tvClear2(tv);
+            //AからString[]を受け取ったらsetLanguage
 
-        //～待ち時間～
-        //langとstrを受け取る
-        mode_you=lang;
+            int getMode=0;//A側から受け取ったMode
+            mode_you = getMode;
+            String[] fromA = str;
+            setLanguage(fromA);
+        }
+    }
+
+    public void setLanguage(){ //A側（画面をタッチして言語選択をする方）
+        setContentView(R.layout.activity_set);
+        View decor = this.getWindow().getDecorView();
+        decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN | View. SYSTEM_UI_FLAG_IMMERSIVE);
+
+        tvClear1(tv);
+
+        //タッチイベントを待機
+        findViewById(R.id.text_two).setOnClickListener(this);
+        findViewById(R.id.text_three).setOnClickListener(this);
+        findViewById(R.id.text_four).setOnClickListener(this);
+        findViewById(R.id.text_five).setOnClickListener(this);
+    }
+
+
+    public void setLanguage(String[] trans){//B側（Aから受け取った翻訳済み言語をタッチして言語選択する方）
+        setContentView(R.layout.activity_set);
+        View decor = this.getWindow().getDecorView();
+        decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN | View. SYSTEM_UI_FLAG_IMMERSIVE);
+
+        inputTv(trans);
 
         //strを領域2～5に表示
         findViewById(R.id.text_two).setOnClickListener(this);
         findViewById(R.id.text_three).setOnClickListener(this);
         findViewById(R.id.text_four).setOnClickListener(this);
         findViewById(R.id.text_five).setOnClickListener(this);
-
-        inputTv(str);
-
-
     }
 
-    public void setScreenSub(){
-
-        Log.d(TAG,"into setScreenSub");
-
-        setContentView(R.layout.activity_sub);
-        View decor = this.getWindow().getDecorView();
-        decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_FULLSCREEN | View. SYSTEM_UI_FLAG_IMMERSIVE);//FullScreen
-
-        TextView tv1 = (TextView)findViewById(R.id.text); //activity_subのTextView
-        int i = 0;
-        Log.d(TAG,"setScreenSub");
-
-        //音声認識か、通信によってsに文字列が入っているかを確認する
-
-        //viewは表示するためのString型変数。翻訳クラスや通信クラスはこれに表示したい文字列を放り込む。
-        // String view = transrator();
-        String view = "I have a pen";
-
-        tv1.setText(view);
-
-
-        if(timerFlag) {  //一定時間が経過したらtimerFlagをTrueにする。これで初期画面に遷移できる
-            Log.d(TAG, "loop break");
-            setScreenMain();
-        }
-
-    }
 
     @Override
     public void onClick(View v) {
         final TextView tex = (TextView) findViewById(v.getId());
-        if (v != null && lang == 99) {
+        if (v != null) {
             switch (v.getId()) {
                 case R.id.text_one:
-
-                    findViewById(R.id.text_one).setEnabled(false);
-                    tvClear1(tv);
-                    //ここで相方へシグナルを送信する必要がある。
+                    onClickArea1(tv);
                     break;
 
                 case R.id.text_two:
                     // クリック処理
-                    Toast.makeText(getApplicationContext(), "Set Language English (" +
-                            Integer.toString(EN) + ")", Toast.LENGTH_SHORT).show();
-                    lang = EN;
-                    mode_me = EN;
+                    onClickArea2();
                     break;
 
                 case R.id.text_three:
                     // クリック処理
-                    Toast.makeText(getApplicationContext(), "Set Language Japanese (" +
-                            Integer.toString(JP) + ")", Toast.LENGTH_SHORT).show();
-                    lang = JP;
-                    mode_me = JP;
+                    onClickArea3();
                     break;
 
                 case R.id.text_four:
                     // クリック処理
-                    Toast.makeText(getApplicationContext(), "Set Language Deutsch (" +
-                            Integer.toString(CN) + ")", Toast.LENGTH_SHORT).show();
-                    lang = CN;
-                    mode_me = CN;
+                    onClickArea4();
                     break;
 
                 case R.id.text_five:
                     // クリック処理
-                    Toast.makeText(getApplicationContext(), "Set Language French (" +
-                            Integer.toString(KR) + ")", Toast.LENGTH_SHORT).show();
-                    lang = KR;
-                    mode_me = KR;
+                    onClickArea5();
                     break;
 
                 default:
             }
-            inputTv(lang);
+        }
+        if(mode_you==99) { //mode_youが決まっていない→A側なので音声認識と翻訳と翻訳結果の送信を行う
+//            speechRecognition();
+//            translate();
+//            sendTranslated();
+            //～待ち時間～
 
-            /*transrate(lang);  //翻訳機に言語の番号を送信して翻訳言語確定*/
+            int getMode = 0;//B側から送られてきたBのmode
+            mode_you = getMode;
+        }
 
-            setScreenSub();
+        if(mode_me!=99 && mode_you!=99) {
+            Intent intent = new Intent(getApplication(), SubActivity.class);
+            int requestCode = RESULT_SUBACTIVITY;
+            startActivityForResult( intent, requestCode );
         }
     }
 
     public void readyfor(TextView[] tv){
         tv[0] = (TextView)findViewById(R.id.text_one);
-        tv[0].setText("wait touching");
-
-    }
-
-    public void tvClear1(TextView[] tv){//音声認識待ちするところ
-        tv[0] = (TextView)findViewById(R.id.text_one);
-        tv[0].setText("・・・");
+        tv[0].setText("wait touching...");
         tv[1] = (TextView)findViewById(R.id.text_two);
         tv[1].setText("");
         tv[2] = (TextView)findViewById(R.id.text_three);
@@ -181,6 +162,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tv[3].setText("");
         tv[4] = (TextView)findViewById(R.id.text_five);
         tv[4].setText("");
+    }
+
+    public void tvClear1(TextView[] tv){//A側の言語選択画面
+
+        tv[0] = (TextView)findViewById(R.id.text_one);
+        tv[0].setText("");
+        tv[1] = (TextView)findViewById(R.id.text_two);
+        tv[1].setText("English");
+        tv[2] = (TextView)findViewById(R.id.text_three);
+        tv[2].setText("日本語");
+        tv[3] = (TextView)findViewById(R.id.text_four);
+        tv[3].setText("한국어");
+        tv[4] = (TextView)findViewById(R.id.text_five);
+        tv[4].setText("簡体字");
     }
 
     public void tvClear2(TextView[] tv){//相手からのシグナル待ち
@@ -196,19 +191,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tv[4].setText("");
     }
 
-    public void set_me(TextView[] tv){
-        tv[0] = (TextView)findViewById(R.id.text_one);
-        tv[0].setText(' '/*翻訳される前の言語*/);
-
-    }
-
-    public void inputTv(String str[]){
-        for(int i=1; i < NUM_LANG-1; i++){
-            tv[i].setText(str[i]);
+    public void inputTv(String str[]){//A側から投げられたString[]を全て表示する
+        for(int i=1; i < NUM_LANG; i++){
+            tv[i].setText(str[i-1]);
         }
     }
 
-    public void inputTv(int lang){
+    public void inputCenterTv(int lang){//言語選択された時にその言葉を真ん中のTextViewに表示する
+        lang += 1;
         for(int i=0; i < NUM_LANG; i++){
             if(i == lang){
                 tv[0].setText(tv[i].getText().toString());
@@ -220,4 +210,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    private void onClickArea1(TextView[] tv){ //初期状態でタッチされたら、自分の言語設定画面に遷移
+        findViewById(R.id.text_one).setEnabled(false);
+        //ここで相方へシグナルを送信する必要がある。
+        setLanguage();
+    }
+
+    private void onClickArea2(){
+        Toast.makeText(getApplicationContext(), "Set Language English (" +
+                Integer.toString(EN) + ")", Toast.LENGTH_SHORT).show();
+        mode_me = EN;
+        inputCenterTv(mode_me);
+    }
+
+    private void onClickArea3(){
+        Toast.makeText(getApplicationContext(), "日本語に設定しました (" +
+                Integer.toString(JP) + ")", Toast.LENGTH_SHORT).show();
+        mode_me = JP;
+        inputCenterTv(mode_me);
+    }
+
+    private void onClickArea4(){
+        Toast.makeText(getApplicationContext(), "한국어로 설정했습니다 (" +
+                Integer.toString(KR) + ")", Toast.LENGTH_SHORT).show();
+        mode_me = KR;
+        inputCenterTv(mode_me);
+    }
+
+    private void onClickArea5(){
+        Toast.makeText(getApplicationContext(), "在中文设定了 (" +
+                Integer.toString(CN) + ")", Toast.LENGTH_SHORT).show();
+        mode_me = CN;
+        inputCenterTv(mode_me);
+    }
+
+    // SubActivity からの返しの結果を受け取る
+    protected void onActivityResult( int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        if(resultCode == RESULT_OK && requestCode == RESULT_SUBACTIVITY && null != intent) {
+            mode_you = intent.getIntExtra("mode_you", 0);
+            mode_me = intent.getIntExtra("mode_me", 0);
+            waitTouch();
+        }
+    }
+
 }
+
