@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.webkit.WebView;
 
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 
@@ -41,8 +42,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_FULLSCREEN | View. SYSTEM_UI_FLAG_IMMERSIVE);
 
-        ImageView imageView = (ImageView) findViewById(R.id.gifView);
-        GlideDrawableImageViewTarget target = new GlideDrawableImageViewTarget(imageView);
+//        ImageView imageView = (ImageView) findViewById(R.id.gifView);
+//        GlideDrawableImageViewTarget target = new GlideDrawableImageViewTarget(imageView);
+        //いらん
 
         boolean sig = false; //通信相手からシグナルを受け取ったらTrueになる、という想定。
 
@@ -51,6 +53,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //テキストエリア１（真ん中）をタッチ可能に設定&wait表示
         readyfor(tv);
+
+        WebView target = (WebView) findViewById(R.id.gifarea);
+        target.getSettings().setUseWideViewPort(true);
+        target.getSettings().setLoadWithOverviewMode(true);
+        String filePath = "file:///android_res/raw/" + "waterdrop.gif";
+        target.loadUrl(filePath);
 
         //タッチが検出されるまで待つ
         findViewById(R.id.text_one).setOnClickListener(this);
@@ -152,8 +160,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void readyfor(TextView[] tv){
+
+//        WebView target = (WebView) findViewById(R.id.gifarea);
+//        String filePath = "file:///android_res/raw/" + "waterdrop.gif";
+//        target.loadUrl(filePath);
+
         tv[0] = (TextView)findViewById(R.id.text_one);
-        tv[0].setText("wait touching...");
+        tv[0].setText("wait touching");
         tv[1] = (TextView)findViewById(R.id.text_two);
         tv[1].setText("");
         tv[2] = (TextView)findViewById(R.id.text_three);
@@ -162,6 +175,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tv[3].setText("");
         tv[4] = (TextView)findViewById(R.id.text_five);
         tv[4].setText("");
+
+
     }
 
     public void tvClear1(TextView[] tv){//A側の言語選択画面
