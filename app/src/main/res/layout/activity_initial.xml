@@ -8,6 +8,15 @@
     tools:context="com.example.fukidashi_interface.MainActivity">
 
 
+    <WebView
+        android:id="@+id/gifarea"
+        android:layout_width="40dp"
+        android:layout_height="576dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="#FAFAFA"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp" />
 
     <TextView
         android:id="@+id/text_one"
