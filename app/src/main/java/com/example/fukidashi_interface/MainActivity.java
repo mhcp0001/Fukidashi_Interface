@@ -54,8 +54,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //テキストエリア１（真ん中）をタッチ可能に設定&wait表示
         readyfor(tv);
 
+
         WebView target = (WebView) findViewById(R.id.gifarea);
         target.getSettings().setUseWideViewPort(true);
+        target.getSettings().setJavaScriptEnabled(true);
         target.getSettings().setLoadWithOverviewMode(true);
         String filePath = "file:///android_res/raw/" + "waterdrop.gif";
         target.loadUrl(filePath);
@@ -271,4 +273,3 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 }
-
