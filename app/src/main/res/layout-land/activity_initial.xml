@@ -5,17 +5,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
+    android:background="#FCFEFB"
     tools:context="com.example.fukidashi_interface.MainActivity">
+
 
     <WebView
         android:id="@+id/gifarea"
-        android:layout_width="415dp"
-        android:layout_height="317dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:background="#FAFAFA"
-        tools:layout_editor_absoluteX="88dp"
-        tools:layout_editor_absoluteY="45dp" />
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:background="#FCFEFB"
+        android:layout_margin="210dp">
+
+    </WebView>
 
     <TextView
         android:id="@+id/text_one"
@@ -89,7 +91,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintHorizontal_bias="0.293"
         app:layout_constraintVertical_bias="0.79" />
-
 
 
 </android.support.constraint.ConstraintLayout>
