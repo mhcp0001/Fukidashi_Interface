@@ -1,6 +1,7 @@
 package com.example.fukidashi_interface;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -20,6 +21,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final int JP = 1;  /*日本語*/
     public static final int KR = 2;  /*韓国語*/
     public static final int CN = 3;  /*中国語*/
+
+
 
     static final int RESULT_SUBACTIVITY = 1000;
 
@@ -166,9 +169,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        WebView target = (WebView) findViewById(R.id.gifarea);
 //        String filePath = "file:///android_res/raw/" + "waterdrop.gif";
 //        target.loadUrl(filePath);
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "SourceSansPro-Regular.ttf");
 
         tv[0] = (TextView)findViewById(R.id.text_one);
         tv[0].setText("wait touching");
+        tv[0].setTypeface(typeface);
         tv[1] = (TextView)findViewById(R.id.text_two);
         tv[1].setText("");
         tv[2] = (TextView)findViewById(R.id.text_three);
@@ -183,21 +188,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void tvClear1(TextView[] tv){//A側の言語選択画面
 
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "SourceSansPro-Regular.ttf");
+
         tv[0] = (TextView)findViewById(R.id.text_one);
         tv[0].setText("");
         tv[1] = (TextView)findViewById(R.id.text_two);
         tv[1].setText("English");
+        tv[1].setTypeface(typeface);
         tv[2] = (TextView)findViewById(R.id.text_three);
         tv[2].setText("日本語");
+        tv[2].setTypeface(typeface);
         tv[3] = (TextView)findViewById(R.id.text_four);
         tv[3].setText("한국어");
+        tv[3].setTypeface(typeface);
         tv[4] = (TextView)findViewById(R.id.text_five);
         tv[4].setText("簡体字");
+        tv[4].setTypeface(typeface);
     }
 
     public void tvClear2(TextView[] tv){//相手からのシグナル待ち
+
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "SourceSansPro-Regular.ttf");
+
         tv[0] = (TextView)findViewById(R.id.text_one);
         tv[0].setText("wait");
+        tv[0].setTypeface(typeface);
         tv[1] = (TextView)findViewById(R.id.text_two);
         tv[1].setText("");
         tv[2] = (TextView)findViewById(R.id.text_three);
